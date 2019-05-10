@@ -1,3 +1,10 @@
+"""
+Created on Sun May  5 20:49:06 2019
+
+@author: karen hui xiao
+"""
+
+
 import csv
 import pprint
 
@@ -19,7 +26,10 @@ def get_bar_party_data():
                         'longitude': row[5],
                         'num_calls': row[6]}
             bar_list.append(bar_dict)
+    del bar_list[0]
     return bar_list
+    
+
 
 
 def print_data(data):
@@ -33,7 +43,29 @@ def get_most_noisy_city_and_borough(data):
     noisiest_city_and_borough = {'city': None, 'borough': None, 'num_city_calls': None, 'num_borough_calls': None}
 
     # write code here to find the noisiest city and borough and their respective metrics
-
+    
+    cityCallsDict = {}
+    for i in data:
+        if i['city'] not in cityCallsDict.keys(): 
+            cityCallsDict[i['city']] = int(i['num_calls'])               
+        else:
+            cityCallsDict[i['city']] += int(i['num_calls'])
+    
+    boroughCallsDict = {}
+    for i in data:
+        if i['borough'] not in boroughCallsDict.keys() and i['borough'] != 'Unspecified':
+            boroughCallsDict[i['borough']] = int(i['num_calls'])     
+        if i['borough'] in boroughCallsDict.keys():
+            boroughCallsDict[i['borough']] += int(i['num_calls']) 
+    
+    noisiest_city = max(cityCallsDict.keys(), key = (lambda x: cityCallsDict[x]))
+    noisiest_borough = max(boroughCallsDict.keys(), key = (lambda x: boroughCallsDict[x]))
+    
+    noisiest_city_and_borough['city'] = noisiest_city
+    noisiest_city_and_borough['borough'] = noisiest_borough
+    noisiest_city_and_borough['num_city_calls'] =  cityCallsDict[noisiest_city]
+    noisiest_city_and_borough['num_borough_calls'] = boroughCallsDict[noisiest_borough]
+    
     return noisiest_city_and_borough
 
 
@@ -43,7 +75,28 @@ def get_quietest_city_and_borough(data):
     quietest_city_and_borough = {'city': None, 'borough': None, 'num_city_calls': None, 'num_borough_calls': None}
 
     # write code here to find the quietest city and borough and their respective metrics
-
+    cityCallsDict = {}
+    for i in data:
+        if i['city'] not in cityCallsDict.keys(): 
+            cityCallsDict[i['city']] = int(i['num_calls'])               
+        else:
+            cityCallsDict[i['city']] += int(i['num_calls'])
+    
+    boroughCallsDict = {}
+    for i in data:
+        if i['borough'] not in boroughCallsDict.keys() and i['borough'] != 'Unspecified':
+            boroughCallsDict[i['borough']] = int(i['num_calls'])     
+        if i['borough'] in boroughCallsDict.keys():
+            boroughCallsDict[i['borough']] += int(i['num_calls']) 
+    
+    quietest_city = min(cityCallsDict.keys(), key = (lambda x: cityCallsDict[x]))
+    quietest_borough = min(boroughCallsDict.keys(), key = (lambda x: boroughCallsDict[x]))
+    
+    quietest_city_and_borough['city'] = quietest_city
+    quietest_city_and_borough['borough'] = quietest_borough
+    quietest_city_and_borough['num_city_calls'] = cityCallsDict[quietest_city]
+    quietest_city_and_borough['num_borough_calls'] = boroughCallsDict[quietest_borough]
+    
     return quietest_city_and_borough
 
 
@@ -51,7 +104,7 @@ if __name__ == '__main__':
     bar_data = get_bar_party_data()
 
     # uncomment the line below to see what the data looks like
-    # print_data(bar_data)
+    #print_data(bar_data)
 
     noisy_metrics = get_most_noisy_city_and_borough(bar_data)
 
